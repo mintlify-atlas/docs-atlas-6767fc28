@@ -1,0 +1,57 @@
+{
+  "projectType": "frontend",
+  "projectName": "Brasa — Hamburguesas Artesanales",
+  "projectDescription": "Brasa is an artisan burger restaurant website featuring an editorial product menu, ordering UI, about section, and contact information.",
+  "theme": "almond",
+  "primaryColor": "#c8761a",
+  "lightColor": "#f7f4ef",
+  "darkColor": "#1a1814",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["introduction", "quickstart"]
+          },
+          {
+            "group": "Pages & Sections",
+            "pages": ["pages/hero", "pages/menu", "pages/about", "pages/contact"]
+          },
+          {
+            "group": "Customization",
+            "pages": ["customization/styling", "customization/colors-fonts", "customization/images"]
+          },
+          {
+            "group": "Interactivity",
+            "pages": ["interactivity/ordering", "interactivity/animations", "interactivity/sidebar-menu"]
+          },
+          {
+            "group": "Deployment",
+            "pages": ["deployment/getting-started", "deployment/faq"]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Editorial full-screen hero section with animated reveal",
+    "Product grid with 5 burger menu items and prices",
+    "Slide-in lateral product menu panel",
+    "Shopping bag counter with add-to-order functionality",
+    "About section with brand pillars and statistics",
+    "Contact section with address, hours, WhatsApp, and email",
+    "Smooth scroll reveal animations using IntersectionObserver",
+    "Responsive navigation with scroll-triggered background blur",
+    "Social media links (Instagram, Facebook, TikTok)"
+  ],
+  "publicApiSurface": [
+    "addItem() — increments the shopping bag counter",
+    "toggleProdMenu() — opens/closes the lateral product menu panel",
+    "setFilter(el, cat) — filters products by category and scrolls to grid",
+    "filterProducts(cat) — shows/hides product cards based on category",
+    "scrollToGrid() — smooth scrolls to the product menu grid",
+    "IntersectionObserver reveal — animates .reveal elements on scroll"
+  ]
+}
