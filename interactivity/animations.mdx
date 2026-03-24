@@ -1,0 +1,142 @@
+---
+title: 'Animations'
+description: 'Scroll-reveal, nav transitions, and filter animations used across the Brasa site.'
+keywords: ['animations', 'reveal', 'IntersectionObserver', 'scroll', 'filter', 'transitions']
+---
+
+# Animations
+
+Brasa uses three animation systems: a scroll-reveal system for page elements, a nav background transition on scroll, and a per-card fade-in when products are filtered.
+
+## Scroll-reveal: the `reveal` system
+
+Any element with the class `reveal` will animate into view when it enters the viewport.
+
+```javascript main.js
+const reveals = document.querySelectorAll('.reveal');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.classList.add('visible');
+      }, i * 60);
+      observer.unobserve(entry.target);
+    }
+  });
+}, {
+  threshold: 0.1
+});
+
+reveals.forEach(el => observer.observe(el));
+```
+
+### How it works
+
+1. On page load, every `.reveal` element is registered with an `IntersectionObserver`.
+2. When an element scrolls into view (at least **10%** visible, `threshold: 0.1`), the callback fires.
+3. A **staggered delay** of `i * 60ms` is applied — the first element in the observed batch triggers immediately, the second after 60 ms, the third after 120 ms, and so on. This creates a cascading entrance when multiple elements enter the viewport at the same time.
+4. The class `visible` is added to the element.
+5. `observer.unobserve()` is called so the animation only plays once.
+
+### Required CSS
+
+The `.reveal` class alone does nothing visual — you must define the transition in your CSS. A typical setup:
+
+```css styles.css
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+```
+
+<Warning>
+If you forget to add the CSS for `.reveal` and `.reveal.visible`, elements with the `reveal` class will be invisible and never appear, even after the observer fires.
+</Warning>
+
+### Adding `reveal` to new elements
+
+Add the class directly to any HTML element:
+
+```html index.html
+<section class="reveal">
+  <h2>Nueva sección</h2>
+  <p>Este contenido aparecerá al hacer scroll.</p>
+</section>
+```
+
+<Note>
+The observer is set up once when the page loads. Elements added to the DOM dynamically after load will not be observed automatically — you would need to call `observer.observe(newElement)` manually.
+</Note>
+
+## Nav scroll animation
+
+The navbar gains a background when the user scrolls more than 30 px down the page.
+
+```javascript main.js
+const nav = document.getElementById('nav');
+
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 30);
+}, { passive: true });
+```
+
+- The `scroll` listener uses `{ passive: true }` for better performance — it tells the browser the handler will not call `preventDefault()`.
+- `.scrolled` is toggled on when `scrollY > 30` and toggled off when the user scrolls back to the top.
+
+Your CSS controls what `.scrolled` looks like:
+
+```css styles.css
+#nav {
+  background: transparent;
+  transition: background 0.3s ease;
+}
+
+#nav.scrolled {
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+}
+```
+
+## Filter animation
+
+When a sidebar filter is selected, `filterProducts()` hides non-matching cards and plays a quick fade-in on visible ones.
+
+```javascript main.js
+function filterProducts(cat) {
+  const products = document.querySelectorAll('.product');
+
+  products.forEach(product => {
+    const productCat = product.getAttribute('data-cat');
+
+    if (cat === 'todas' || productCat === cat) {
+      product.style.display = 'flex';
+
+      product.style.opacity = '0';
+      product.style.transform = 'translateY(12px)';
+      setTimeout(() => {
+        product.style.transition = 'opacity .4s ease, transform .4s ease';
+        product.style.opacity = '1';
+        product.style.transform = 'translateY(0)';
+      }, 50);
+
+    } else {
+      product.style.display = 'none';
+    }
+  });
+}
+```
+
+- Matching cards are immediately set to `display: flex`, then their opacity and transform are set to the start state (`opacity: 0`, `translateY(12px)`).
+- A `setTimeout` of **50 ms** is used to allow the browser to paint the hidden state before the transition starts. Without this delay the browser may skip the animation.
+- Non-matching cards are hidden with `display: none`.
+
+<Tip>
+The filter animation applies inline styles directly. If you want to control the animation from CSS instead, replace the inline style manipulation with a class toggle and define the keyframes in your stylesheet.
+</Tip>

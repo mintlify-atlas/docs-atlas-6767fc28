@@ -1,0 +1,111 @@
+---
+title: 'Ordering'
+description: 'How the shopping bag counter works and how to extend it into a full cart system.'
+keywords: ['cart', 'bag', 'counter', 'addItem', 'ordering']
+---
+
+# Ordering
+
+Brasa's ordering interaction is a lightweight bag counter. It tracks the number of items added and reflects the count in the navbar. There is no real cart logic yet — no item storage, no totals, no checkout flow.
+
+## How the counter works
+
+The counter lives in `main.js` and relies on two things: a module-level variable and a DOM element.
+
+```javascript main.js
+let count = 0;
+const bagCount = document.querySelector('.bag-count');
+
+function addItem() {
+  count++;
+  bagCount.textContent = count;
+  bagCount.classList.add('visible');
+}
+```
+
+- `count` — starts at `0` and increases by 1 on every call to `addItem()`.
+- `.bag-count` — a DOM element (typically a `<span>` inside the navbar bag icon) that displays the current count.
+- `.visible` — a CSS class added to show the badge once at least one item has been added. Before `addItem()` is called the badge is hidden.
+
+### The `.bag-count` element
+
+The element with class `bag-count` is expected to be present in the HTML before `main.js` runs. It starts hidden via CSS and becomes visible when the `visible` class is applied.
+
+```html index.html
+<span class="bag-count"></span>
+```
+
+Your CSS should hide it by default and reveal it when `.visible` is present:
+
+```css styles.css
+.bag-count {
+  display: none;
+}
+
+.bag-count.visible {
+  display: inline-block;
+}
+```
+
+### `addItem()` signature
+
+```javascript
+function addItem(): void
+```
+
+`addItem()` takes no arguments. It increments the global `count`, updates the badge text, and ensures the badge is visible. Every product card's "Add" button calls this function via an `onclick` attribute.
+
+## Current limitations
+
+<Warning>
+The current implementation is a counter only. It does not store which items were added, their quantities, or their prices. Refreshing the page resets the count to zero.
+</Warning>
+
+- No item objects are stored — you cannot display a cart summary.
+- No duplicate handling — clicking "Add" multiple times on the same product adds multiple counts.
+- No removal — there is no way to decrement the counter.
+- No persistence — the count is lost on page reload.
+
+## Extending the counter into a real cart
+
+To store actual item data, replace the `count` variable with an array and update `addItem()` to accept an item object.
+
+```javascript main.js
+let cartItems = [];
+const bagCount = document.querySelector('.bag-count');
+
+function addItem(item) {
+  cartItems.push(item);
+  bagCount.textContent = cartItems.length;
+  bagCount.classList.add('visible');
+}
+```
+
+Each product card button passes an object describing the item:
+
+```html index.html
+<button onclick="addItem({ name: 'Brasa Signature', price: 32000 })">
+  Agregar
+</button>
+```
+
+You can then read `cartItems` at any time to display a summary:
+
+```javascript main.js
+function renderCart() {
+  const total = cartItems.reduce((sum, item) => sum + item.price, 0);
+  console.log(`${cartItems.length} items — Total: $${total.toLocaleString()}`);
+}
+```
+
+<Tip>
+If you want the cart to survive a page reload, store `cartItems` in `localStorage` and parse it back on page load.
+</Tip>
+
+```javascript main.js
+// Save
+localStorage.setItem('cart', JSON.stringify(cartItems));
+
+// Load on startup
+let cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+```

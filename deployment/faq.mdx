@@ -1,0 +1,227 @@
+---
+title: "FAQ"
+description: "Answers to common questions about running, customizing, and deploying the Brasa static site."
+---
+
+<AccordionGroup>
+  <Accordion title="Do I need Node.js or any build tools?">
+    No. The site is plain HTML, CSS, and JavaScript — there is no build step, no `package.json`, and no dependencies to install.
+
+    To preview it locally, open a terminal in the project folder and run:
+
+    ```bash terminal
+    python3 -m http.server 8080
+    ```
+
+    Then visit `http://localhost:8080` in your browser. If you don't have Python 3, any static file server works — for example:
+
+    ```bash terminal
+    npx serve .
+    ```
+
+    Or simply double-click `index.html` to open it in a browser (though serving over HTTP is recommended for animations — see below).
+  </Accordion>
+
+  <Accordion title="Why don't my images load?">
+    Image loading failures are almost always caused by a filename mismatch. The site uses case-sensitive filenames on Linux and most web servers.
+
+    Check the following:
+
+    - All images must be inside the `img/` folder at the project root.
+    - Filenames must match exactly what is in the `src` attribute in `index.html` — including uppercase extensions (`.JPG` vs `.jpg`).
+    - Note the intentional spelling difference between two product images:
+
+    ```
+    img/burguer-1.JPG   ← "burguer" (with a 'u')
+    img/burger-2.JPG    ← "burger" (no 'u')
+    img/burguer-3.JPG
+    img/burguer-4.JPG
+    ```
+
+    If you replace images with your own files, either use the exact same filenames or update the corresponding `src` attributes in `index.html`.
+  </Accordion>
+
+  <Accordion title="How do I add Instagram, Facebook, and TikTok links?">
+    The social icons in the footer currently have placeholder `href="#"` values. Find the footer socials section in `index.html` and replace each `#` with your actual profile URL:
+
+    ```html index.html
+    <!-- Before -->
+    <a href="#" aria-label="Instagram">...</a>
+    <a href="#" aria-label="Facebook">...</a>
+    <a href="#" aria-label="TikTok">...</a>
+
+    <!-- After -->
+    <a href="https://www.instagram.com/YOUR_HANDLE" aria-label="Instagram">...</a>
+    <a href="https://www.facebook.com/YOUR_PAGE" aria-label="Facebook">...</a>
+    <a href="https://www.tiktok.com/@YOUR_HANDLE" aria-label="TikTok">...</a>
+    ```
+
+    Use the full URL including `https://`.
+  </Accordion>
+
+  <Accordion title="The scroll reveal animation isn't working">
+    The scroll reveal uses the browser's `IntersectionObserver` API, which works reliably when the page is served over HTTP. If you open `index.html` directly from your filesystem (`file://` protocol), some browsers restrict the API and elements may appear immediately without animating — or not appear at all.
+
+    Serve the site locally instead:
+
+    ```bash terminal
+    python3 -m http.server 8080
+    ```
+
+    Then open `http://localhost:8080`. The `reveal` class animations should work correctly. This is only relevant for local development — the animations work fine on any deployed host (GitHub Pages, Netlify, Vercel, FTP host).
+  </Accordion>
+
+  <Accordion title="How do I change the restaurant name 'Brasa'?">
+    The name "Brasa" appears in multiple places: the navbar logo, section headings, the page title, and the footer copyright.
+
+    Use your editor's find-and-replace to change all occurrences in `index.html`:
+
+    1. Open `index.html` in your editor.
+    2. Use **Find & Replace** (`Ctrl+H` or `Cmd+H`) to search for `Brasa` and replace with your restaurant name.
+    3. Also update the `<title>` tag in the `<head>`:
+
+    ```html index.html
+    <!-- Before -->
+    <title>Brasa — Hamburguesas Artesanales</title>
+
+    <!-- After -->
+    <title>Your Restaurant Name — Your Tagline</title>
+    ```
+
+    4. Update the `<meta name="description">` tag as well for better SEO.
+  </Accordion>
+
+  <Accordion title="Can I add a real shopping cart?">
+    The current implementation in `main.js` only counts items. The `addItem()` function increments a counter stored in a variable and updates the badge in the navbar — it does not record which items were added.
+
+    To build a real cart you would need to:
+
+    1. Store added items in a JavaScript array or object, including product name, price, and quantity.
+    2. Build a cart UI — typically a slide-in drawer or a dedicated cart page.
+    3. Render the cart contents dynamically from that array.
+    4. Optionally persist the cart across page refreshes using `localStorage`.
+
+    A minimal example of tracking items in `main.js`:
+
+    ```javascript main.js
+    const cart = [];
+
+    function addItem(name, price) {
+      const existing = cart.find(item => item.name === name);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({ name, price, quantity: 1 });
+      }
+      updateBadge();
+    }
+
+    function updateBadge() {
+      const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.querySelector('.bag-count').textContent = total;
+    }
+    ```
+
+    This requires custom JavaScript development beyond the current scope of the template.
+  </Accordion>
+
+  <Accordion title="How do I add a new page (e.g., a catering page)?">
+    The site supports multiple pages by default — each `.html` file is its own page. To add a catering page:
+
+    1. Create a new file `catering.html` in the project root.
+    2. Link the same stylesheets in the `<head>`:
+
+    ```html catering.html
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Catering — Brasa</title>
+      <link rel="stylesheet" href="style.css">
+      <link rel="stylesheet" href="landing.css">
+    </head>
+    <body>
+      <!-- your catering content -->
+      <script src="main.js"></script>
+    </body>
+    </html>
+    ```
+
+    3. Add a link to the page in the navbar inside `index.html`:
+
+    ```html index.html
+    <a href="catering.html">Catering</a>
+    ```
+
+    Upload the new `catering.html` file alongside `index.html` when you deploy.
+  </Accordion>
+
+  <Accordion title="How do I update the copyright year in the footer?">
+    Find the copyright line in the footer of `index.html` and update the year:
+
+    ```html index.html
+    <!-- Before -->
+    <p>&copy; 2025 Brasa. Todos los derechos reservados.</p>
+
+    <!-- After -->
+    <p>&copy; 2026 Brasa. Todos los derechos reservados.</p>
+    ```
+
+    To avoid updating this manually every year, you can set it dynamically with JavaScript:
+
+    ```html index.html
+    <p>&copy; <span id="year"></span> Brasa. Todos los derechos reservados.</p>
+    ```
+
+    ```javascript main.js
+    document.getElementById('year').textContent = new Date().getFullYear();
+    ```
+  </Accordion>
+
+  <Accordion title="My images look blurry on large screens">
+    The site uses `object-fit: cover` to fill image containers, so low-resolution source images will appear blurry when stretched to fill a large viewport.
+
+    Use high-resolution source images:
+
+    | Image | Recommended minimum size |
+    |---|---|
+    | `hero.JPG` | 1920 × 1080 px |
+    | `menu-large.JPG` | 1920 × 1280 px |
+    | `about.JPG` | 1920 × 1080 px |
+    | Product images (`burguer-*.JPG`) | 800 × 800 px |
+
+    Before uploading, compress images to reduce file size without sacrificing visible quality. Recommended tools:
+
+    - [Squoosh](https://squoosh.app) — browser-based, free, no upload limit
+    - [TinyJPG](https://tinyjpg.com) — fast batch compression
+
+    Target file sizes: under 300 KB for hero images, under 100 KB for product thumbnails.
+  </Accordion>
+
+  <Accordion title="How do I make the WhatsApp number clickable?">
+    Wrap the phone number in an anchor tag using WhatsApp's `wa.me` link format. The number must include the country code with no spaces, dashes, or plus signs.
+
+    ```html index.html
+    <!-- Before -->
+    <p>+57 300 000 0000</p>
+
+    <!-- After -->
+    <a href="https://wa.me/573001234567">+57 300 000 0000</a>
+    ```
+
+    The format is `https://wa.me/COUNTRYCODENUMBER` — for example:
+
+    | Country | Number | wa.me URL |
+    |---|---|---|
+    | Colombia (+57) | 300 123 4567 | `https://wa.me/573001234567` |
+    | Mexico (+52) | 55 1234 5678 | `https://wa.me/525512345678` |
+    | Spain (+34) | 612 345 678 | `https://wa.me/34612345678` |
+
+    You can also pre-fill a message by appending a `text` query parameter:
+
+    ```html index.html
+    <a href="https://wa.me/573001234567?text=Hola%2C%20quiero%20hacer%20un%20pedido">+57 300 000 0000</a>
+    ```
+  </Accordion>
+</AccordionGroup>

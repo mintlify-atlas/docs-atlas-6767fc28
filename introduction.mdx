@@ -1,0 +1,86 @@
+---
+title: "Introduction"
+description: "Brasa is an artisan burger restaurant website — editorial, elegant, and built entirely with HTML, CSS, and JavaScript."
+---
+
+## What is Brasa?
+
+**Brasa** is a premium burger restaurant brand built around a single conviction: great food doesn't need to be complicated — it just needs the best ingredients. This website is the brand's digital presence: an editorial-style single-page experience that showcases the menu, tells the brand story, and makes it easy for customers to find and contact the restaurant.
+
+The site is built with pure HTML, CSS, and vanilla JavaScript — no frameworks, no build tools. It's designed to be fast, beautiful, and easy to customize.
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Get the site running locally in under two minutes
+  </Card>
+  <Card title="Pages & Sections" icon="layout" href="/pages/hero">
+    Understand how each page section is structured
+  </Card>
+  <Card title="Customization" icon="palette" href="/customization/styling">
+    Adapt the brand colors, fonts, and layout to your needs
+  </Card>
+  <Card title="Deployment" icon="cloud" href="/deployment/getting-started">
+    Deploy the site to GitHub Pages, Netlify, or Vercel
+  </Card>
+</CardGroup>
+
+## Key features
+
+<CardGroup cols={2}>
+  <Card title="Editorial hero section" icon="image">
+    Full-screen image block with animated caption and a call-to-action link
+  </Card>
+  <Card title="Product menu grid" icon="grid-2">
+    Four-column burger grid with names, prices, and add-to-order buttons
+  </Card>
+  <Card title="Slide-in product panel" icon="panel-left">
+    Hamburger-triggered lateral menu listing all five products with prices
+  </Card>
+  <Card title="Shopping bag counter" icon="shopping-bag">
+    Persistent cart icon in the navbar with a live item count badge
+  </Card>
+  <Card title="About section" icon="users">
+    Brand story, four core pillars, and key stats (5+ years, 12 recipes, 100% artisanal)
+  </Card>
+  <Card title="Contact section" icon="map-pin">
+    Address, hours, WhatsApp, and email displayed clearly for walk-in customers
+  </Card>
+  <Card title="Scroll reveal animations" icon="sparkles">
+    Elements animate into view using the IntersectionObserver API — no libraries
+  </Card>
+  <Card title="Responsive navbar" icon="menu">
+    Fixed navigation that gains a frosted-glass background on scroll
+  </Card>
+</CardGroup>
+
+## Technology stack
+
+| Layer | Technology |
+|---|---|
+| Markup | HTML5 (`index.html`) |
+| Styles | CSS3 with custom properties (`style.css`, `landing.css`) |
+| Interactivity | Vanilla JavaScript (`main.js`) |
+| Typography | Cormorant Garamond (serif headings), DM Sans (body) via Google Fonts |
+| Images | Local `.JPG` files in the `img/` directory |
+
+## Project structure
+
+```
+burguer-brasa/
+├── index.html        # Main page — all sections in one file
+├── style.css         # Core design system (variables, nav, grid, components)
+├── landing.css       # Landing-specific layouts (about, contact, footer)
+├── main.js           # All JavaScript behavior
+└── img/              # Product and hero images
+    ├── hero.JPG
+    ├── menu-large.JPG
+    ├── about.JPG
+    ├── burguer-1.JPG
+    ├── burger-2.JPG
+    ├── burguer-3.JPG
+    └── burguer-4.JPG
+```
+
+<Note>
+The project uses no build system, package manager, or framework. Everything runs directly in the browser from static files — making it trivial to host anywhere.
+</Note>

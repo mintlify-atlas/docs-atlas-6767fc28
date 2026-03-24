@@ -1,0 +1,173 @@
+---
+title: "Getting started with deployment"
+description: "Deploy the Brasa site to GitHub Pages, Netlify, Vercel, or a traditional web host — no build step required."
+---
+
+Brasa is a pure static site: HTML, CSS, and JavaScript files with no build tools or package manager. Deploying it means copying the files to a host that can serve them over HTTP. Any static hosting service works.
+
+## What to check before deploying
+
+Before going live, review these items in `index.html`:
+
+- **Contact details** — Replace the placeholder address, phone number, and email with your real restaurant information in the contact section.
+- **Hero and product images** — Replace `img/hero.JPG`, `img/burguer-1.JPG`, `img/burger-2.JPG`, `img/burguer-3.JPG`, and `img/burguer-4.JPG` with your actual restaurant photos. Keep the same filenames or update the `src` attributes in `index.html`.
+- **Page title and meta description** — Update the `<title>` tag and the `<meta name="description">` in the `<head>` section.
+- **Social media links** — In the footer, the Instagram, Facebook, and TikTok anchors all have `href="#"`. Replace them with your real profile URLs before launch.
+- **Scroll behavior** — Test that all nav links scroll to the correct sections (`#inicio`, `#menu`, `#nosotros`, `#contacto`).
+- **Shopping bag counter** — Click each **Agregar** button and confirm the badge in the navbar increments correctly.
+
+<Warning>
+The social links in the footer currently point to `#`. If you go live without updating them, customers who click the icons will stay on the same page with no feedback.
+</Warning>
+
+## Deployment options
+
+<Tabs>
+  <Tab title="GitHub Pages">
+    GitHub Pages is free for public repositories and requires no extra tooling.
+
+    <Steps>
+      <Step title="Push your files to GitHub">
+        Create a repository and push all project files to the `main` branch (or any branch you prefer).
+
+        ```bash terminal
+        git init
+        git add .
+        git commit -m "initial commit"
+        git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
+        git push -u origin main
+        ```
+      </Step>
+      <Step title="Enable GitHub Pages">
+        In your repository, go to **Settings → Pages**. Under **Source**, choose **Deploy from a branch**, then select your branch (`main`) and the root folder (`/`). Click **Save**.
+      </Step>
+      <Step title="Access your live site">
+        GitHub will build and publish the site. After a minute or two, it will be available at:
+
+        ```
+        https://YOUR_USERNAME.github.io/YOUR_REPO/
+        ```
+
+        The URL is shown at the top of the Pages settings panel once deployment completes.
+      </Step>
+    </Steps>
+
+    <Note>
+    GitHub Pages is free for public repositories. Private repositories require a paid GitHub plan to use Pages.
+    </Note>
+  </Tab>
+
+  <Tab title="Netlify">
+    Netlify offers drag-and-drop deployment and a free tier for personal projects.
+
+    <Steps>
+      <Step title="Create a Netlify account">
+        Sign up at [netlify.com](https://netlify.com) with your GitHub, GitLab, or email.
+      </Step>
+      <Step title="Deploy via drag-and-drop or Git">
+        **Option A — Drag and drop (fastest):**
+        In the Netlify dashboard, click **Add new site → Deploy manually**. Drag your entire project folder into the upload area. Netlify will detect the static files and deploy immediately.
+
+        **Option B — Connect your Git repository:**
+        Click **Add new site → Import an existing project**. Authorize Netlify to access your repository, then select it from the list.
+      </Step>
+      <Step title="Configure the build settings">
+        Because this is a static site with no build step, leave the build command empty and set the publish directory to `/` (the repo root).
+
+        | Setting | Value |
+        |---|---|
+        | Build command | *(leave empty)* |
+        | Publish directory | `.` or `/` |
+
+        Click **Deploy site**.
+      </Step>
+      <Step title="Get your live URL">
+        Netlify assigns a URL like `https://random-name-123.netlify.app`. You can rename it in **Site settings → Domain management** or connect a custom domain.
+      </Step>
+    </Steps>
+
+    <Tip>
+    With the Git option, every push to your main branch automatically redeploys the site — no manual uploads needed.
+    </Tip>
+  </Tab>
+
+  <Tab title="Vercel">
+    Vercel's free tier supports static sites with automatic deployments from Git.
+
+    <Steps>
+      <Step title="Import your repository">
+        Go to [vercel.com](https://vercel.com) and sign in with GitHub. Click **Add New → Project**, then select your repository.
+      </Step>
+      <Step title="Set the framework preset">
+        On the configuration screen, set **Framework Preset** to **Other**. Do not select a framework — this is a plain static site with no framework-specific build process.
+
+        | Setting | Value |
+        |---|---|
+        | Framework Preset | Other |
+        | Build Command | *(leave empty)* |
+        | Output Directory | `.` |
+        | Install Command | *(leave empty)* |
+      </Step>
+      <Step title="Deploy">
+        Click **Deploy**. Vercel will detect that there is nothing to build and serve the files directly. Your site will be live at a `.vercel.app` URL within seconds.
+      </Step>
+    </Steps>
+
+    <Note>
+    Like Netlify, Vercel redeploys automatically on every push to the connected branch.
+    </Note>
+  </Tab>
+
+  <Tab title="Manual / FTP">
+    For traditional shared hosting (cPanel, Hostinger, GoDaddy, etc.), deploy via FTP.
+
+    <Steps>
+      <Step title="Connect to your host via FTP">
+        Use an FTP client such as [FileZilla](https://filezilla-project.org/) (free). Enter your host's FTP credentials — typically found in your hosting control panel.
+
+        ```
+        Host:     ftp.yourdomain.com
+        Username: your_ftp_username
+        Password: your_ftp_password
+        Port:     21
+        ```
+      </Step>
+      <Step title="Upload all files to the public directory">
+        Navigate to your host's public web directory — usually `public_html/` or `www/`. Upload all project files, maintaining the exact directory structure:
+
+        ```
+        public_html/
+        ├── index.html
+        ├── style.css
+        ├── landing.css
+        ├── main.js
+        └── img/
+            ├── hero.JPG
+            ├── menu-large.JPG
+            ├── about.JPG
+            ├── burguer-1.JPG
+            ├── burger-2.JPG
+            ├── burguer-3.JPG
+            └── burguer-4.JPG
+        ```
+
+        <Warning>
+        Image filenames are case-sensitive on Linux servers. `hero.JPG` and `hero.jpg` are different files. Use the exact same casing as the `src` attributes in `index.html`.
+        </Warning>
+      </Step>
+      <Step title="Verify the deployment">
+        Open your domain in a browser. If the page loads but images are missing, check the filenames and paths. If styles are missing, confirm `style.css` and `landing.css` are in the root directory alongside `index.html`.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## Local preview before deploying
+
+Always test the site locally over HTTP before uploading. Opening `index.html` directly with `file://` can cause issues with the scroll-reveal animations.
+
+```bash terminal
+python3 -m http.server 8080
+```
+
+Then open `http://localhost:8080` in your browser. All sections, animations, and the shopping bag counter should work correctly.

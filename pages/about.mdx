@@ -1,0 +1,99 @@
+---
+title: "About section"
+description: "The Nosotros section communicates the brand story, values, and key statistics."
+---
+
+The About (Nosotros) section tells the story of Brasa: why it was founded, how food is prepared, and what the brand stands for. It combines an image, a blockquote, four brand pillars, and three key statistics.
+
+## HTML structure
+
+```html index.html
+<section id="nosotros" class="landing-nosotros">
+  <div class="about-visual">
+    <img src="img/about.JPG" alt="Nuestra cocina"
+         style="object-position: center top;">
+  </div>
+  <div class="about-content reveal">
+    <p class="sec-label">Quiénes somos</p>
+    <blockquote class="about-quote">
+      "Una buena hamburguesa no necesita complicarse.
+       Solo necesita el mejor ingrediente."
+    </blockquote>
+    <p class="about-body">
+      Nacimos de la convicción de que la comida bien hecha tiene que ser
+      accesible. Seleccionamos nuestra carne, horneamos el pan cada mañana
+      y preparamos nuestras salsas desde cero — sin atajos.
+    </p>
+    <!-- pillars and stats below -->
+  </div>
+</section>
+```
+
+## Brand pillars
+
+The four pillars each have an SVG icon, a title, and a one-line description:
+
+| Pillar | Description |
+|---|---|
+| A la brasa siempre | Cocción lenta sobre carbón. Sin trucos. |
+| Ingredientes del día | Compramos local, preparamos fresco. |
+| Receta propia | Salsas, aderezos y panes. Todo nuestro. |
+| Calidad sin negociar | Carne de res seleccionada, siempre. |
+
+Each pillar follows this HTML pattern:
+
+```html index.html
+<div class="pillar">
+  <svg class="pillar-ico" viewBox="0 0 24 24" fill="none">
+    <!-- SVG path here -->
+  </svg>
+  <p class="pillar-t">A la brasa siempre</p>
+  <p class="pillar-d">Cocción lenta sobre carbón. Sin trucos.</p>
+</div>
+```
+
+To add a new pillar, duplicate a `.pillar` block and update the SVG, title (`pillar-t`), and description (`pillar-d`).
+
+## Statistics
+
+Three stats are displayed below the pillars:
+
+```html index.html
+<div class="stats">
+  <div><span class="stat-n">5+</span><span class="stat-l">Años</span></div>
+  <div><span class="stat-n">12</span><span class="stat-l">Recetas</span></div>
+  <div><span class="stat-n">100%</span><span class="stat-l">Artesanal</span></div>
+</div>
+```
+
+Update `.stat-n` for the number and `.stat-l` for the label.
+
+## Editing the brand story
+
+The blockquote and body copy are plain text in `index.html`. Edit them directly:
+
+```html index.html
+<blockquote class="about-quote">
+  "Your updated brand quote here."
+</blockquote>
+<p class="about-body">
+  Your updated brand story here.
+</p>
+```
+
+## Changing the about image
+
+Replace `img/about.JPG` with your own image. The `object-position: center top` inline style controls which part of the image is visible when cropped — adjust it if your focal point is different:
+
+```html index.html
+<img src="img/about.JPG" alt="Nuestra cocina"
+     style="object-position: center top;">
+```
+
+<Tip>
+Use `object-position: center center` for most portrait-oriented photos, or `object-position: center 20%` to show slightly below the top.
+</Tip>
+
+## Decorative circles
+
+The two `.s-circle` elements (`.s1` and `.s2`) are purely decorative overlays on the image with SVG flame and leaf icons. They're styled in `landing.css` and can be hidden or repositioned without affecting functionality.

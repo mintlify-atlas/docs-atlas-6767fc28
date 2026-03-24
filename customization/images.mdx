@@ -1,0 +1,176 @@
+---
+title: "Images"
+description: "Manage and replace images in the Brasa site, including the hero, menu feature, about photo, and product card images."
+---
+
+All images are stored in the `img/` directory at the project root. The site uses eight image files across five distinct roles.
+
+## Directory structure
+
+```text
+img/
+├── hero.JPG         # Full-screen hero background
+├── menu-large.JPG   # Brasa Signature featured section
+├── about.JPG        # About/nosotros section (used in two places)
+├── burguer-1.JPG    # La Clásica product card
+├── burger-2.JPG     # La Picante product card
+├── burguer-3.JPG    # BBQ Ranch product card
+└── burguer-4.JPG    # Trufa & Hongos product card
+```
+
+<Note>
+`burger-2.JPG` uses a different spelling than the other burger images (`burguer-*`). This is intentional in the source — when referencing it in HTML or CSS, use the exact filename `burger-2.JPG`.
+</Note>
+
+## Image roles and requirements
+
+<CardGroup cols={2}>
+  <Card title="hero.JPG" icon="image">
+    Full-screen hero section background. Displayed with `object-fit: cover` at 100vw × 100vh. Use a **landscape** image of at least **1920 × 1080 px**. The focal point should be centered or slightly above center.
+  </Card>
+  <Card title="menu-large.JPG" icon="image">
+    Featured image in the "Brasa Signature" editorial split section. Fills one half of a two-column grid. Landscape orientation, minimum **1200 × 900 px**.
+  </Card>
+  <Card title="about.JPG" icon="image">
+    Used in two locations: a full-width banner and the about/nosotros section. Both instances use `object-position: center top` to keep faces or key details in frame. Minimum **1600 × 900 px**.
+  </Card>
+  <Card title="burguer/burger-*.JPG" icon="image">
+    Four product card images (La Clásica, La Picante, BBQ Ranch, Trufa & Hongos). Each renders in a fixed-height card with `object-fit: cover`. Use **square or portrait** crops, minimum **600 × 700 px**.
+  </Card>
+</CardGroup>
+
+## How images are rendered
+
+All images use `object-fit: cover` so they fill their container without distortion, cropping to fit rather than letterboxing.
+
+```css style.css
+.card-img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.about-img {
+  width: 100%;
+  height: 480px;
+  object-fit: cover;
+  object-position: center top;  /* preserves top of frame */
+}
+```
+
+Use `object-position` to control which part of the image stays visible when the container crops it:
+
+| Value | Effect |
+|---|---|
+| `center` (default) | Crops evenly on all sides |
+| `center top` | Anchors the top edge, crops the bottom |
+| `center bottom` | Anchors the bottom edge, crops the top |
+| `left center` | Anchors the left edge, crops the right |
+| `80% 20%` | Custom focal point (x% from left, y% from top) |
+
+## Replacing images
+
+<Steps>
+  <Step title="Prepare your replacement image">
+    Export the image at the recommended size for its role (see requirements above). Save as JPG with quality 75–85% for a good size-to-quality balance.
+  </Step>
+  <Step title="Name the file">
+    Use the exact same filename as the image you are replacing, including the original capitalisation (`.JPG`, not `.jpg`), to avoid updating references in `index.html`.
+
+    ```text
+    img/hero.JPG          ← replace this file
+    img/burguer-1.JPG     ← replace this file
+    ```
+  </Step>
+  <Step title="Drop it into the img/ directory">
+    Overwrite the existing file. No HTML changes are needed if you kept the filename identical.
+  </Step>
+  <Step title="Adjust object-position if needed">
+    If your replacement image has a different focal point, update `object-position` in `style.css` or `landing.css` for that specific image's selector.
+
+    ```css style.css
+    .hero-bg {
+      object-position: 60% center;  /* shift focal point right */
+    }
+    ```
+  </Step>
+</Steps>
+
+<Tip>
+If you need a different filename, update the corresponding `src` attribute in `index.html`. Search for the old filename to find every occurrence.
+</Tip>
+
+## Replacing a specific product card image
+
+Each burger product card references its image directly in `index.html`:
+
+```html index.html
+<!-- La Clásica -->
+<img src="img/burguer-1.JPG" alt="La Clásica" class="card-img">
+
+<!-- La Picante -->
+<img src="img/burger-2.JPG" alt="La Picante" class="card-img">
+
+<!-- BBQ Ranch -->
+<img src="img/burguer-3.JPG" alt="BBQ Ranch" class="card-img">
+
+<!-- Trufa & Hongos -->
+<img src="img/burguer-4.JPG" alt="Trufa & Hongos" class="card-img">
+```
+
+To swap one card image, replace the file in `img/` or update the `src` attribute to a new filename.
+
+## Performance: compressing JPGs
+
+The `img/` directory contains full-resolution JPGs that can significantly affect page load time if unoptimized.
+
+<AccordionGroup>
+  <Accordion title="Recommended compression settings">
+    | Image | Recommended output size |
+    |---|---|
+    | `hero.JPG` | Under 400 KB |
+    | `menu-large.JPG` | Under 250 KB |
+    | `about.JPG` | Under 300 KB |
+    | `burguer-*.JPG` / `burger-2.JPG` | Under 120 KB each |
+
+    Use a quality setting of **75–85** in Photoshop, Squoosh, or ImageOptim. At this range, JPG compression artifacts are not visible at normal viewing distances.
+  </Accordion>
+  <Accordion title="Using Squoosh (browser-based, free)">
+    1. Go to [squoosh.app](https://squoosh.app).
+    2. Drop your image onto the page.
+    3. Set the codec to **MozJPEG**, quality **80**.
+    4. Download and replace the file in `img/`.
+  </Accordion>
+  <Accordion title="Using ImageMagick (command line)">
+    ```bash
+    magick hero.JPG -quality 80 -strip hero.JPG
+    ```
+
+    The `-strip` flag removes EXIF metadata (GPS coordinates, camera model), which is unnecessary for web and reduces file size.
+
+    To batch-compress all images in the `img/` directory:
+
+    ```bash
+    for f in img/*.JPG; do magick "$f" -quality 80 -strip "$f"; done
+    ```
+  </Accordion>
+  <Accordion title="Converting to WebP for modern browsers">
+    WebP typically achieves 30–50% smaller files than JPG at equivalent visual quality. To convert and serve WebP with a JPG fallback:
+
+    ```bash
+    magick hero.JPG -quality 80 img/hero.webp
+    ```
+
+    ```html index.html
+    <picture>
+      <source srcset="img/hero.webp" type="image/webp">
+      <img src="img/hero.JPG" alt="Brasa hero">
+    </picture>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+<Warning>
+Do not upscale images. Serving a 600 px image in a 1920 px container will look blurry even with `object-fit: cover`. Always start from a source image larger than the container it fills.
+</Warning>

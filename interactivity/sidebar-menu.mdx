@@ -1,0 +1,169 @@
+---
+title: 'Sidebar menu'
+description: 'How the product sidebar panel works, including the trigger, overlay, and item list.'
+keywords: ['sidebar', 'menu', 'panel', 'hamburger', 'toggleProdMenu', 'overlay']
+---
+
+# Sidebar menu
+
+Brasa includes a slide-in product panel that gives users a quick look at the menu from anywhere on the page. It is triggered by a hamburger-style button and closes via a close button, an overlay click, or by selecting a menu item.
+
+## Structure overview
+
+The panel is made up of three main pieces:
+
+| Element | ID | Role |
+|---|---|---|
+| Hamburger trigger | `menuTrigger` | Opens and closes the panel |
+| Dark overlay | `menuOverlay` | Covers the page; click to close |
+| Slide-in panel | `menuPanel` | Contains the product list |
+
+```html index.html
+<div class="prod-menu-trigger" id="menuTrigger" onclick="toggleProdMenu()">
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+
+<div class="prod-menu-overlay" id="menuOverlay" onclick="toggleProdMenu()"></div>
+
+<aside class="prod-menu-panel" id="menuPanel">
+  <!-- panel content -->
+</aside>
+```
+
+The three `<span>` elements inside `.prod-menu-trigger` form the three lines of the hamburger icon. CSS animates them into an X when the `.open` class is applied.
+
+## `toggleProdMenu()`
+
+```javascript index.html
+function toggleProdMenu() {
+  const panel = document.getElementById('menuPanel');
+  const overlay = document.getElementById('menuOverlay');
+  const trigger = document.getElementById('menuTrigger');
+  panel.classList.toggle('open');
+  overlay.classList.toggle('open');
+  trigger.classList.toggle('open');
+}
+```
+
+Every call to `toggleProdMenu()` toggles the class `open` on all three elements simultaneously:
+
+- **`menuPanel`** — sliding the panel into view (controlled by CSS `transform` or `right` property).
+- **`menuOverlay`** — making the dark backdrop visible.
+- **`menuTrigger`** — animating the hamburger lines into a close (X) icon.
+
+<Note>
+`toggleProdMenu()` is defined inside a `<script>` tag in `index.html`, not in `main.js`. It must remain accessible globally so that the `onclick` attributes in the HTML can reach it.
+</Note>
+
+## The overlay
+
+The overlay is a full-screen `<div>` that sits between the page content and the panel. Its `onclick="toggleProdMenu()"` means clicking anywhere outside the panel closes it — a standard UX pattern for drawers.
+
+Your CSS should make the overlay cover the viewport and be transparent by default, becoming semi-opaque when `.open` is applied:
+
+```css styles.css
+.prod-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  pointer-events: none;
+  transition: background 0.3s ease;
+  z-index: 99;
+}
+
+.prod-menu-overlay.open {
+  background: rgba(0, 0, 0, 0.5);
+  pointer-events: all;
+}
+```
+
+## Products in the panel
+
+The panel lists 5 products. Each item scrolls to the product grid and closes the panel when clicked.
+
+```html index.html
+<ul class="prod-menu-list">
+  <li onclick="scrollToGrid(); toggleProdMenu()">
+    <span class="prod-menu-name">Brasa Signature</span>
+    <span class="prod-menu-price">$32.000</span>
+  </li>
+  <li onclick="scrollToGrid(); toggleProdMenu()">
+    <span class="prod-menu-name">La Clásica</span>
+    <span class="prod-menu-price">$22.000</span>
+  </li>
+  <li onclick="scrollToGrid(); toggleProdMenu()">
+    <span class="prod-menu-name">La Picante</span>
+    <span class="prod-menu-price">$26.000</span>
+  </li>
+  <li onclick="scrollToGrid(); toggleProdMenu()">
+    <span class="prod-menu-name">BBQ Ranch</span>
+    <span class="prod-menu-price">$28.000</span>
+  </li>
+  <li onclick="scrollToGrid(); toggleProdMenu()">
+    <span class="prod-menu-name">Trufa & Hongos</span>
+    <span class="prod-menu-price">$34.000</span>
+  </li>
+</ul>
+```
+
+| Product | Price |
+|---|---|
+| Brasa Signature | $32.000 |
+| La Clásica | $22.000 |
+| La Picante | $26.000 |
+| BBQ Ranch | $28.000 |
+| Trufa & Hongos | $34.000 |
+
+## `scrollToGrid()`
+
+Clicking any product item calls `scrollToGrid()` before closing the panel:
+
+```javascript main.js
+function scrollToGrid() {
+  const grid = document.getElementById('menu-grid');
+  if (grid) {
+    grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+```
+
+This smoothly scrolls the page to the element with `id="menu-grid"`. The `if (grid)` check prevents a JavaScript error if the grid element is not present on the page.
+
+## Adding a new product
+
+To add a product to the sidebar panel, insert a new `<li>` inside `.prod-menu-list`:
+
+```html index.html
+<li onclick="scrollToGrid(); toggleProdMenu()">
+  <span class="prod-menu-name">Doble Smash</span>
+  <span class="prod-menu-price">$29.000</span>
+</li>
+```
+
+<Tip>
+The sidebar panel is a quick-access preview, not the full menu. Keep the list short. Use the "Ver menú completo" CTA at the bottom of the panel to direct users to the full product grid.
+</Tip>
+
+## Changing the panel layout
+
+The panel's visual structure is controlled entirely by CSS classes on the `<aside>` and its children.
+
+| Element | Class | Controls |
+|---|---|---|
+| Slide-in panel | `.prod-menu-panel` | Width, position, background, transform |
+| Category label | `.prod-menu-label` | Uppercase tag above the title |
+| Panel title | `.prod-menu-title` | Large heading with italic `<em>` |
+| Product list | `.prod-menu-list` | List layout and item spacing |
+| Item name | `.prod-menu-name` | Left-aligned product name |
+| Item price | `.prod-menu-price` | Right-aligned price |
+| CTA link | `.prod-menu-cta` | Bottom call-to-action button |
+
+To change the panel width, update `.prod-menu-panel` in your CSS:
+
+```css styles.css
+.prod-menu-panel {
+  width: 340px; /* increase or decrease as needed */
+}
+```

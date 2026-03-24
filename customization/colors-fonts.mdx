@@ -1,0 +1,215 @@
+---
+title: "Colors and fonts"
+description: "Customize the Brasa brand palette and typography using CSS custom properties."
+---
+
+The entire Brasa color scheme and typography system is defined in a single `:root` block at the top of `style.css`. Changing these variables instantly updates every element on the page.
+
+## Color variables
+
+```css style.css
+:root {
+  --bg:      #f7f4ef;  /* Main background — warm cream */
+  --bg2:     #ede9e2;  /* Secondary background — slightly darker cream */
+  --ink:     #1a1814;  /* Primary text — near-black with warm undertone */
+  --ink2:    #4a4640;  /* Secondary text — medium brown-gray */
+  --ink3:    #9a948a;  /* Muted text — labels and metadata */
+  --accent:  #c8761a;  /* Brand accent — warm amber/orange */
+  --line:    rgba(26, 24, 20, 0.10);   /* Subtle border color */
+  --linemed: rgba(26, 24, 20, 0.18);   /* Medium border color */
+}
+```
+
+### Variable roles
+
+| Variable | Value | Used for |
+|---|---|---|
+| `--bg` | `#f7f4ef` | Page background, nav background (scrolled state) |
+| `--bg2` | `#ede9e2` | Card backgrounds, alternating section fills |
+| `--ink` | `#1a1814` | Headings, primary body text |
+| `--ink2` | `#4a4640` | Subheadings, descriptive paragraphs |
+| `--ink3` | `#9a948a` | Labels, captions, pricing metadata |
+| `--accent` | `#c8761a` | CTA buttons, links, highlight spans |
+| `--line` | `rgba(26,24,20,0.10)` | Hairline dividers, card outlines |
+| `--linemed` | `rgba(26,24,20,0.18)` | Section dividers, input borders |
+
+## Changing the accent color
+
+`--accent` is used for call-to-action buttons, hover states, and any decorative highlight element. It is the most visible brand color after the background.
+
+<Steps>
+  <Step title="Open style.css">
+    Find the `:root` block at the top of the file.
+  </Step>
+  <Step title="Replace the accent value">
+    ```css style.css
+    :root {
+      --accent: #c8761a;   /* original amber */
+    }
+    ```
+
+    Replace with your chosen color:
+
+    ```css style.css
+    :root {
+      --accent: #e63946;   /* example: deep red */
+    }
+    ```
+  </Step>
+  <Step title="Check contrast">
+    `--accent` appears against both `--bg` (light cream) and dark overlays. Verify contrast ratios meet WCAG AA (4.5:1 for body text, 3:1 for large text) using a tool like [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/).
+  </Step>
+</Steps>
+
+<Tip>
+If you want a dark-mode variant, define a second set of variables inside a `@media (prefers-color-scheme: dark)` block and override only the tokens that need to change.
+</Tip>
+
+## Changing the background
+
+The site uses two background levels to create depth between sections.
+
+```css style.css
+:root {
+  --bg:  #f7f4ef;   /* base page background */
+  --bg2: #ede9e2;   /* elevated surface (cards, alternating rows) */
+}
+```
+
+For a lighter, more neutral feel:
+
+```css style.css
+:root {
+  --bg:  #fafaf8;
+  --bg2: #f0ede8;
+}
+```
+
+For a darker, moodier treatment:
+
+```css style.css
+:root {
+  --bg:  #1a1814;   /* swap background and ink for dark mode */
+  --bg2: #252220;
+  --ink: #f7f4ef;
+  --ink2: #c9c5bf;
+  --ink3: #7a7470;
+}
+```
+
+<Note>
+The `--line` and `--linemed` border colors are expressed as `rgba()` values relative to `--ink`. If you switch to a dark background, update those opacity values or replace them with light-toned rgba equivalents so borders remain visible.
+</Note>
+
+## Changing text colors
+
+Three ink levels create a typographic hierarchy:
+
+<AccordionGroup>
+  <Accordion title="--ink (primary text)">
+    Used for all main headings and high-importance body copy. Default is near-black with a warm undertone (`#1a1814`).
+
+    ```css style.css
+    --ink: #1a1814;
+    ```
+
+    For a cooler, more neutral black:
+
+    ```css style.css
+    --ink: #111827;
+    ```
+  </Accordion>
+  <Accordion title="--ink2 (secondary text)">
+    Used for descriptive paragraphs and subheadings. Default is a medium brown-gray (`#4a4640`).
+
+    ```css style.css
+    --ink2: #4a4640;
+    ```
+  </Accordion>
+  <Accordion title="--ink3 (muted text)">
+    Used for labels, captions, price metadata, and any low-emphasis content. Default is a light warm gray (`#9a948a`).
+
+    ```css style.css
+    --ink3: #9a948a;
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Typography
+
+Two typefaces are loaded from Google Fonts and assigned to CSS variables:
+
+```css style.css
+:root {
+  --ff-t: 'Cormorant Garamond', Georgia, serif;  /* editorial / headings */
+  --ff-b: 'DM Sans', sans-serif;                 /* body / UI */
+}
+```
+
+### Cormorant Garamond — editorial and headings
+
+A high-contrast serif used for all display text: the hero title, section headings, product names, and editorial pull quotes. Its refined, high-contrast stroke gives the brand a premium, artisanal feel.
+
+**Weights loaded:** 300 (Light), 300 Italic, 400 (Regular), 400 Italic, 600 (SemiBold)
+
+```html index.html
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+```
+
+### DM Sans — body and UI
+
+A geometric sans-serif used for navigation links, body paragraphs, captions, buttons, and labels. Its even stroke width ensures legibility at small sizes.
+
+**Weights loaded:** 300 (Light), 400 (Regular), 500 (Medium)
+
+```html index.html
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+```
+
+## Swapping to different typefaces
+
+<Steps>
+  <Step title="Choose your fonts">
+    Go to [fonts.google.com](https://fonts.google.com), select your heading font and body font, and copy the `<link>` embed code for both.
+  </Step>
+  <Step title="Replace the link tag in index.html">
+    Find the existing Google Fonts `<link>` in the `<head>` of `index.html` and replace it:
+
+    ```html index.html
+    <!-- Remove this: -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Add your new fonts, for example: -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    ```
+  </Step>
+  <Step title="Update the CSS variables in style.css">
+    ```css style.css
+    :root {
+      --ff-t: 'Playfair Display', Georgia, serif;
+      --ff-b: 'Inter', sans-serif;
+    }
+    ```
+  </Step>
+</Steps>
+
+<Warning>
+Only request the font weights you actually use. Loading unnecessary weights increases page load time. Check `style.css` and `landing.css` for `font-weight` values before deciding which weights to include in the Google Fonts URL.
+</Warning>
+
+## Using system fonts (no Google Fonts)
+
+To remove the Google Fonts dependency entirely and fall back to system fonts:
+
+```html index.html
+<!-- Remove the Google Fonts <link> tag -->
+```
+
+```css style.css
+:root {
+  --ff-t: Georgia, 'Times New Roman', serif;
+  --ff-b: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+```
+
+System fonts load instantly and carry no external dependency, at the cost of cross-platform consistency.

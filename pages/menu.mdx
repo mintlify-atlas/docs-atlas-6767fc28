@@ -1,0 +1,92 @@
+---
+title: "Menu section"
+description: "The product grid displays all burgers with prices and add-to-order buttons."
+---
+
+The menu section uses a four-column grid to display the restaurant's burger offerings. Each item includes a photo, name, price, and an "Añadir al pedido" (Add to Order) button that increments the shopping bag counter in the navbar.
+
+## HTML structure
+
+```html index.html
+<section class="editorial-grid reveal" id="grid">
+  <div class="grid-header">
+    <span class="editorial-label">Nuestro menú</span>
+    <h2 class="grid-title">Cada una,<br><em>una historia.</em></h2>
+  </div>
+
+  <div class="grid-items">
+    <div class="grid-item reveal">
+      <div class="grid-img">
+        <img src="img/burguer-1.JPG" alt="La Clásica">
+      </div>
+      <div class="grid-info">
+        <span class="grid-name">La Clásica</span>
+        <span class="grid-price">$22.000</span>
+      </div>
+      <button class="product-btn" onclick="addItem()">Añadir al pedido</button>
+    </div>
+    <!-- ... more items -->
+  </div>
+</section>
+```
+
+## Current menu items
+
+| Name | Price | Image file |
+|---|---|---|
+| La Clásica | $22.000 | `burguer-1.JPG` |
+| La Picante | $26.000 | `burger-2.JPG` |
+| BBQ Ranch | $28.000 | `burguer-3.JPG` |
+| Trufa & Hongos | $34.000 | `burguer-4.JPG` |
+
+The full menu (including "Brasa Signature" at $32.000) is also listed in the [lateral product panel](/interactivity/sidebar-menu).
+
+## Adding a new menu item
+
+Copy an existing `.grid-item` block and update the image source, name, price, and alt text:
+
+```html index.html
+<div class="grid-item reveal">
+  <div class="grid-img">
+    <img src="img/your-new-burger.jpg" alt="Your Burger Name">
+  </div>
+  <div class="grid-info">
+    <span class="grid-name">Your Burger Name</span>
+    <span class="grid-price">$XX.000</span>
+  </div>
+  <button class="product-btn" onclick="addItem()">Añadir al pedido</button>
+</div>
+```
+
+<Note>
+The `addItem()` function only increments the bag counter — it does not add items to a cart data structure. See [Ordering UI](/interactivity/ordering) for details on extending this behavior.
+</Note>
+
+## Updating prices
+
+Prices are plain text inside `<span class="grid-price">`. Edit them directly in `index.html`:
+
+```html index.html
+<span class="grid-price">$26.000</span>
+```
+
+## Grid layout
+
+The grid uses CSS Grid defined in `style.css`. By default it shows 4 columns on desktop and collapses to fewer on smaller screens. The grid section has a header with a label and title above the items.
+
+## The "Añadir al pedido" button
+
+Each product button calls `addItem()` from `main.js`, which increments a counter displayed in the navbar's shopping bag icon:
+
+```javascript main.js
+let count = 0;
+const bagCount = document.querySelector('.bag-count');
+
+function addItem() {
+  count++;
+  bagCount.textContent = count;
+  bagCount.classList.add('visible');
+}
+```
+
+See [Ordering UI](/interactivity/ordering) for how to extend this into a full cart system.

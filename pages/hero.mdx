@@ -1,0 +1,101 @@
+---
+title: "Hero section"
+description: "The full-screen editorial hero is the first thing visitors see — it sets the brand tone immediately."
+---
+
+The hero section spans the full viewport height with a large image, a caption overlay, and a call-to-action link. It carries the class `editorial-full` and uses the `reveal` class to animate in on scroll.
+
+## HTML structure
+
+```html index.html
+<section class="editorial-full reveal" id="inicio">
+  <div class="editorial-img">
+    <img src="img/hero.JPG" alt="Brasa">
+  </div>
+  <div class="editorial-caption">
+    <span class="editorial-label">Colección</span>
+    <h2 class="editorial-title">El sabor<br>que <em>queda.</em></h2>
+    <a href="index.html#menu" class="ghost-link">
+      Ver menú
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+        <path d="M3 8h10M9 4l4 4-4 4"/>
+      </svg>
+    </a>
+  </div>
+</section>
+```
+
+## Key classes
+
+| Class | Purpose |
+|---|---|
+| `editorial-full` | Sets the section to `height: 100vh` with the image covering the full area |
+| `editorial-img` | Image container with `object-fit: cover` |
+| `editorial-caption` | Absolutely positioned text overlay |
+| `editorial-label` | Small uppercase label above the title ("Colección") |
+| `editorial-title` | Large serif heading using Cormorant Garamond |
+| `ghost-link` | Outlined call-to-action link with an arrow icon |
+| `reveal` | Triggers the scroll-reveal animation (see [Animations](/interactivity/animations)) |
+
+## Changing the hero image
+
+Replace `img/hero.JPG` with your own image. The image should be at least 1920×1080px for crisp display on large screens.
+
+```html index.html
+<img src="img/your-new-hero.jpg" alt="Your alt text">
+```
+
+<Tip>
+Use a high-contrast image so the white caption text remains legible over it. If your image is light, add a dark overlay with CSS: set a `background: rgba(0,0,0,0.35)` on `.editorial-caption`.
+</Tip>
+
+## Changing the tagline
+
+The headline is directly in the HTML. Edit the `<h2>` inside `.editorial-caption`:
+
+```html index.html
+<h2 class="editorial-title">El sabor<br>que <em>queda.</em></h2>
+```
+
+The `<em>` tag renders in italic using the Cormorant Garamond italic variant, which is already loaded from Google Fonts.
+
+## Brasa Signature split section
+
+Immediately below the hero is a second editorial block — a split layout with the image on the left and product details on the right:
+
+```html index.html
+<section class="editorial-split reveal">
+  <div class="editorial-img">
+    <img src="img/menu-large.JPG" alt="Brasa Signature">
+  </div>
+  <div class="editorial-text">
+    <span class="editorial-label">Destacado</span>
+    <h2 class="editorial-title-sm">Brasa<br><em>Signature</em></h2>
+    <p class="editorial-desc">
+      Nuestra creación más reconocida. Carne angus, queso gouda ahumado
+      y cebolla caramelizada en pan brioche horneado cada mañana.
+    </p>
+    <span class="editorial-price">$32.000</span>
+  </div>
+</section>
+```
+
+To add a new featured product, duplicate this `<section class="editorial-split reveal">` block and update the image, label, title, description, and price.
+
+## Wide banner section
+
+The third block is a full-width image with centered overlay text — used to reinforce the brand's cooking method:
+
+```html index.html
+<section class="editorial-wide reveal">
+  <div class="editorial-img">
+    <img src="img/about.JPG" alt="Hecho a la brasa">
+  </div>
+  <div class="editorial-overlay-text">
+    <span class="editorial-label light">Hecho a mano</span>
+    <h2 class="editorial-title light">A la brasa,<br><em>siempre.</em></h2>
+  </div>
+</section>
+```
+
+The `light` class switches the text to white for visibility over dark images.

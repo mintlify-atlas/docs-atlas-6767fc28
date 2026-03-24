@@ -1,0 +1,191 @@
+---
+title: "Styling"
+description: "Understand the CSS architecture behind the Brasa site and learn how to customize layout, animation, and responsive behavior."
+---
+
+The Brasa site uses two CSS files that each serve a distinct purpose. Understanding which file controls what makes it straightforward to find and edit any style.
+
+## CSS architecture
+
+<CardGroup cols={2}>
+  <Card title="style.css" icon="palette">
+    Core design system: CSS custom properties, navigation, product grid, product cards, editorial blocks, and the reveal scroll animation.
+  </Card>
+  <Card title="landing.css" icon="layout">
+    Page-specific sections: the about/nosotros section, contact section, and footer styles.
+  </Card>
+</CardGroup>
+
+Keep structural and reusable styles in `style.css`. Move one-off section styles to `landing.css` to avoid cluttering the core design system.
+
+## Design token system
+
+All visual decisions — colors, typography, border opacities — are declared as CSS custom properties in a single `:root` block at the top of `style.css`.
+
+```css style.css
+:root {
+  --bg:      #f7f4ef;
+  --bg2:     #ede9e2;
+  --ink:     #1a1814;
+  --ink2:    #4a4640;
+  --ink3:    #9a948a;
+  --accent:  #c8761a;
+  --line:    rgba(26, 24, 20, 0.10);
+  --linemed: rgba(26, 24, 20, 0.18);
+  --ff-t:    'Cormorant Garamond', Georgia, serif;
+  --ff-b:    'DM Sans', sans-serif;
+}
+```
+
+Every rule in both CSS files consumes these variables. For example, the nav background, card borders, heading typeface, and button color all reference the same token. This means you can retheme the entire site by changing one block.
+
+## Overriding variables for quick theming
+
+To test a theme without editing the main file, add a `<style>` block to `index.html` after the stylesheet links:
+
+```html index.html
+<style>
+  :root {
+    --accent: #2563eb;   /* swap amber for blue */
+    --bg:     #ffffff;
+    --bg2:    #f1f5f9;
+  }
+</style>
+```
+
+For a permanent theme change, edit the `:root` block in `style.css` directly. See [Colors and fonts](/customization/colors-fonts) for full variable reference.
+
+<Note>
+CSS custom properties inherit and cascade like any other property. A variable set on a specific element overrides the `:root` value only for that element and its descendants.
+</Note>
+
+## Nav scroll behavior
+
+The navigation bar starts transparent and gains a background once the user scrolls. A small JavaScript snippet in `index.html` adds the `.scrolled` class to the `<nav>` element on scroll.
+
+```css style.css
+.nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  transition: background 0.3s ease, backdrop-filter 0.3s ease;
+  background: transparent;
+}
+
+.nav.scrolled {
+  background: rgba(247, 244, 239, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+```
+
+To change the scrolled background color, update the `rgba` value in `.nav.scrolled` or replace it with a CSS variable:
+
+```css style.css
+.nav.scrolled {
+  background: rgba(var(--bg-rgb), 0.92); /* if you add an RGB variant of --bg */
+}
+```
+
+To adjust the scroll threshold at which `.scrolled` is applied, find the scroll listener in `index.html`:
+
+```html index.html
+<script>
+  const nav = document.querySelector('.nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+</script>
+```
+
+Change `40` to any pixel value that suits your layout.
+
+## Reveal animation
+
+Elements with the `.reveal` class start invisible and slide up into view as they enter the viewport. The animation is driven by an `IntersectionObserver` in `index.html` that adds an `.active` class.
+
+```css style.css
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+```
+
+To apply the animation to any new element, add the `reveal` class to it in `index.html`:
+
+```html index.html
+<section class="my-section reveal">
+  ...
+</section>
+```
+
+To change the animation duration or easing, edit the `transition` property on `.reveal`.
+
+<Tip>
+Stagger multiple sibling `.reveal` elements by adding incremental `transition-delay` values inline: `style="transition-delay: 0.1s"`, `style="transition-delay: 0.2s"`, etc.
+</Tip>
+
+## Responsive considerations
+
+The layout uses CSS Grid throughout. Breakpoints are defined with `@media` queries inside `style.css`. The main responsive patterns are:
+
+<AccordionGroup>
+  <Accordion title="Product card grid">
+    The menu grid switches from a multi-column layout to a single column on small screens.
+
+    ```css style.css
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .menu-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Editorial split sections">
+    Split sections (image left, text right) stack vertically on mobile.
+
+    ```css style.css
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: 768px) {
+      .split {
+        grid-template-columns: 1fr;
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Typography scaling">
+    Large display headings use `clamp()` to scale fluidly between viewport sizes without hard breakpoints.
+
+    ```css style.css
+    .hero-title {
+      font-size: clamp(2.5rem, 8vw, 7rem);
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+<Warning>
+Test on real devices after any grid change. The `object-fit: cover` images in product cards rely on a fixed card height — if you change column counts, also verify the card image height still looks correct.
+</Warning>
