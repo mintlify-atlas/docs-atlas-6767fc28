@@ -1,10 +1,7 @@
 ---
 title: 'Ordering'
 description: 'How the shopping bag counter works and how to extend it into a full cart system.'
-keywords: ['cart', 'bag', 'counter', 'addItem', 'ordering']
 ---
-
-# Ordering
 
 Brasa's ordering interaction is a lightweight bag counter. It tracks the number of items added and reflects the count in the navbar. There is no real cart logic yet — no item storage, no totals, no checkout flow.
 
@@ -32,18 +29,32 @@ function addItem() {
 The element with class `bag-count` is expected to be present in the HTML before `main.js` runs. It starts hidden via CSS and becomes visible when the `visible` class is applied.
 
 ```html index.html
-<span class="bag-count"></span>
+<span class="bag-count">0</span>
 ```
 
-Your CSS should hide it by default and reveal it when `.visible` is present:
+The CSS in `style.css` hides it by default using opacity and scale, then reveals it when `.visible` is added:
 
-```css styles.css
+```css style.css
 .bag-count {
-  display: none;
+  position: absolute;
+  top: 2px; right: 2px;
+  width: 13px; height: 13px;
+  background: var(--accent);
+  border-radius: 50%;
+  font-size: 7px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity .2s, transform .2s;
 }
 
 .bag-count.visible {
-  display: inline-block;
+  opacity: 1;
+  transform: scale(1);
 }
 ```
 

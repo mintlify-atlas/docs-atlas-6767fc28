@@ -61,57 +61,54 @@ CSS custom properties inherit and cascade like any other property. A variable se
 
 ## Nav scroll behavior
 
-The navigation bar starts transparent and gains a background once the user scrolls. A small JavaScript snippet in `index.html` adds the `.scrolled` class to the `<nav>` element on scroll.
+The navigation bar starts transparent and gains a frosted-glass background once the user scrolls more than 30 px. The scroll listener in `main.js` adds the `.scrolled` class to the `<nav>` element:
+
+```javascript main.js
+const nav = document.getElementById('nav');
+
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 30);
+}, { passive: true });
+```
+
+The CSS in `style.css` controls what the scrolled state looks like:
 
 ```css style.css
-.nav {
+nav {
   position: fixed;
-  top: 0;
-  width: 100%;
-  transition: background 0.3s ease, backdrop-filter 0.3s ease;
-  background: transparent;
+  top: 0; left: 0; right: 0;
+  z-index: 300;
+  transition: background .3s, border-color .3s;
+  border-bottom: 1px solid transparent;
 }
 
-.nav.scrolled {
-  background: rgba(247, 244, 239, 0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line);
-}
-```
-
-To change the scrolled background color, update the `rgba` value in `.nav.scrolled` or replace it with a CSS variable:
-
-```css style.css
-.nav.scrolled {
-  background: rgba(var(--bg-rgb), 0.92); /* if you add an RGB variant of --bg */
+nav.scrolled {
+  background: rgba(247, 244, 239, .96);
+  backdrop-filter: blur(14px);
+  border-color: var(--line);
 }
 ```
 
-To adjust the scroll threshold at which `.scrolled` is applied, find the scroll listener in `index.html`:
+To change the scrolled background color, update the `rgba` value in `nav.scrolled` in `style.css`. The value `rgba(247, 244, 239, .96)` is derived from `--bg` (`#f7f4ef`) at 96% opacity.
 
-```html index.html
-<script>
-  const nav = document.querySelector('.nav');
-  window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 40);
-  });
-</script>
+To adjust the scroll threshold, edit the `> 30` condition in `main.js`:
+
+```javascript main.js
+nav.classList.toggle('scrolled', window.scrollY > 30); // change 30 to any pixel value
 ```
-
-Change `40` to any pixel value that suits your layout.
 
 ## Reveal animation
 
-Elements with the `.reveal` class start invisible and slide up into view as they enter the viewport. The animation is driven by an `IntersectionObserver` in `index.html` that adds an `.active` class.
+Elements with the `.reveal` class start invisible and slide up into view as they enter the viewport. The animation is driven by an `IntersectionObserver` in `main.js` that adds the `.visible` class.
 
 ```css style.css
 .reveal {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: translateY(16px);
+  transition: opacity .7s ease, transform .7s ease;
 }
 
-.reveal.active {
+.reveal.visible {
   opacity: 1;
   transform: translateY(0);
 }
@@ -125,10 +122,10 @@ To apply the animation to any new element, add the `reveal` class to it in `inde
 </section>
 ```
 
-To change the animation duration or easing, edit the `transition` property on `.reveal`.
+To change the animation duration or easing, edit the `transition` property on `.reveal` in `style.css`.
 
 <Tip>
-Stagger multiple sibling `.reveal` elements by adding incremental `transition-delay` values inline: `style="transition-delay: 0.1s"`, `style="transition-delay: 0.2s"`, etc.
+The IntersectionObserver in `main.js` adds a staggered delay of `i * 60ms` to consecutive elements observed at the same time — so sibling `.reveal` elements automatically cascade without any inline styles needed.
 </Tip>
 
 ## Responsive considerations
@@ -136,40 +133,57 @@ Stagger multiple sibling `.reveal` elements by adding incremental `transition-de
 The layout uses CSS Grid throughout. Breakpoints are defined with `@media` queries inside `style.css`. The main responsive patterns are:
 
 <AccordionGroup>
-  <Accordion title="Product card grid">
-    The menu grid switches from a multi-column layout to a single column on small screens.
+  <Accordion title="Menu layout (sidebar + grid)">
+    The `#menu` section uses a two-column grid (sidebar + product grid). On tablet it narrows the sidebar, on mobile it collapses to a single column stack.
 
     ```css style.css
-    .menu-grid {
+    #menu {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem;
+      grid-template-columns: 260px 1fr;
     }
 
-    @media (max-width: 768px) {
-      .menu-grid {
-        grid-template-columns: repeat(2, 1fr);
+    @media (max-width: 1024px) {
+      #menu {
+        grid-template-columns: 200px 1fr;
       }
     }
 
-    @media (max-width: 480px) {
-      .menu-grid {
+    @media (max-width: 768px) {
+      #menu {
         grid-template-columns: 1fr;
       }
     }
     ```
   </Accordion>
-  <Accordion title="Editorial split sections">
-    Split sections (image left, text right) stack vertically on mobile.
+  <Accordion title="Product card grid">
+    The `.menu-grid` inside the main area uses 2 columns by default and collapses to 1 on mobile.
 
     ```css style.css
-    .split {
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3rem 2.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .menu-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="About/Nosotros section">
+    The `#nosotros` section is a two-column grid (image + content) that stacks on mobile.
+
+    ```css style.css
+    #nosotros {
       display: grid;
       grid-template-columns: 1fr 1fr;
     }
 
     @media (max-width: 768px) {
-      .split {
+      #nosotros {
         grid-template-columns: 1fr;
       }
     }
@@ -180,12 +194,16 @@ The layout uses CSS Grid throughout. Breakpoints are defined with `@media` queri
 
     ```css style.css
     .hero-title {
-      font-size: clamp(2.5rem, 8vw, 7rem);
+      font-size: clamp(52px, 7.5vw, 108px);
+    }
+
+    .sidebar-title {
+      font-size: clamp(28px, 3vw, 40px);
     }
     ```
   </Accordion>
 </AccordionGroup>
 
 <Warning>
-Test on real devices after any grid change. The `object-fit: cover` images in product cards rely on a fixed card height — if you change column counts, also verify the card image height still looks correct.
+Test on real devices after any grid change. The `object-fit: cover` images in product cards rely on the card's `aspect-ratio: 4/3` — if you change column counts, verify the card images still look correct.
 </Warning>

@@ -1,10 +1,7 @@
 ---
 title: 'Animations'
 description: 'Scroll-reveal, nav transitions, and filter animations used across the Brasa site.'
-keywords: ['animations', 'reveal', 'IntersectionObserver', 'scroll', 'filter', 'transitions']
 ---
-
-# Animations
 
 Brasa uses three animation systems: a scroll-reveal system for page elements, a nav background transition on scroll, and a per-card fade-in when products are filtered.
 
@@ -43,11 +40,11 @@ reveals.forEach(el => observer.observe(el));
 
 The `.reveal` class alone does nothing visual — you must define the transition in your CSS. A typical setup:
 
-```css styles.css
+```css style.css
 .reveal {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transform: translateY(16px);
+  transition: opacity .7s ease, transform .7s ease;
 }
 
 .reveal.visible {
@@ -90,17 +87,18 @@ window.addEventListener('scroll', () => {
 - The `scroll` listener uses `{ passive: true }` for better performance — it tells the browser the handler will not call `preventDefault()`.
 - `.scrolled` is toggled on when `scrollY > 30` and toggled off when the user scrolls back to the top.
 
-Your CSS controls what `.scrolled` looks like:
+The CSS in `style.css` controls what the scrolled state looks like:
 
-```css styles.css
-#nav {
-  background: transparent;
-  transition: background 0.3s ease;
+```css style.css
+nav {
+  transition: background .3s, border-color .3s;
+  border-bottom: 1px solid transparent;
 }
 
-#nav.scrolled {
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(8px);
+nav.scrolled {
+  background: rgba(247, 244, 239, .96);
+  backdrop-filter: blur(14px);
+  border-color: var(--line);
 }
 ```
 

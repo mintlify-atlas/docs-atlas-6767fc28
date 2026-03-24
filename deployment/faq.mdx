@@ -162,16 +162,16 @@ description: "Answers to common questions about running, customizing, and deploy
 
     ```html index.html
     <!-- Before -->
-    <p>&copy; 2025 Brasa. Todos los derechos reservados.</p>
+    <p class="footer-copy">© 2025 Brasa · Todos los derechos reservados</p>
 
     <!-- After -->
-    <p>&copy; 2026 Brasa. Todos los derechos reservados.</p>
+    <p class="footer-copy">© 2026 Brasa · Todos los derechos reservados</p>
     ```
 
     To avoid updating this manually every year, you can set it dynamically with JavaScript:
 
     ```html index.html
-    <p>&copy; <span id="year"></span> Brasa. Todos los derechos reservados.</p>
+    <p class="footer-copy">© <span id="year"></span> Brasa · Todos los derechos reservados</p>
     ```
 
     ```javascript main.js

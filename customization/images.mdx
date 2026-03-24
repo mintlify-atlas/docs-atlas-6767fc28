@@ -3,7 +3,7 @@ title: "Images"
 description: "Manage and replace images in the Brasa site, including the hero, menu feature, about photo, and product card images."
 ---
 
-All images are stored in the `img/` directory at the project root. The site uses eight image files across five distinct roles.
+All images are stored in the `img/` directory at the project root. The site uses seven image files across five distinct roles.
 
 ## Directory structure
 
@@ -41,23 +41,18 @@ img/
 
 ## How images are rendered
 
-All images use `object-fit: cover` so they fill their container without distortion, cropping to fit rather than letterboxing.
+All images use `object-fit: cover` globally, set in `style.css` on the `img` element itself:
 
 ```css style.css
-.card-img {
+img {
+  display: block;
   width: 100%;
-  height: 280px;
+  height: 100%;
   object-fit: cover;
-  object-position: center;
-}
-
-.about-img {
-  width: 100%;
-  height: 480px;
-  object-fit: cover;
-  object-position: center top;  /* preserves top of frame */
 }
 ```
+
+This means every image fills its container entirely, cropping to fit rather than letterboxing. The container's dimensions control the visible area. For example, product card images are constrained by their parent's `aspect-ratio: 4/3`, while the about section image has a minimum height of `500px`.
 
 Use `object-position` to control which part of the image stays visible when the container crops it:
 
@@ -107,16 +102,16 @@ Each burger product card references its image directly in `index.html`:
 
 ```html index.html
 <!-- La Clásica -->
-<img src="img/burguer-1.JPG" alt="La Clásica" class="card-img">
+<img src="img/burguer-1.JPG" alt="La Clásica">
 
 <!-- La Picante -->
-<img src="img/burger-2.JPG" alt="La Picante" class="card-img">
+<img src="img/burger-2.JPG" alt="La Picante">
 
 <!-- BBQ Ranch -->
-<img src="img/burguer-3.JPG" alt="BBQ Ranch" class="card-img">
+<img src="img/burguer-3.JPG" alt="BBQ Ranch">
 
 <!-- Trufa & Hongos -->
-<img src="img/burguer-4.JPG" alt="Trufa & Hongos" class="card-img">
+<img src="img/burguer-4.JPG" alt="Trufa & Hongos">
 ```
 
 To swap one card image, replace the file in `img/` or update the `src` attribute to a new filename.

@@ -1,10 +1,7 @@
 ---
 title: 'Sidebar menu'
 description: 'How the product sidebar panel works, including the trigger, overlay, and item list.'
-keywords: ['sidebar', 'menu', 'panel', 'hamburger', 'toggleProdMenu', 'overlay']
 ---
-
-# Sidebar menu
 
 Brasa includes a slide-in product panel that gives users a quick look at the menu from anywhere on the page. It is triggered by a hamburger-style button and closes via a close button, an overlay click, or by selecting a menu item.
 
@@ -61,23 +58,7 @@ Every call to `toggleProdMenu()` toggles the class `open` on all three elements 
 
 The overlay is a full-screen `<div>` that sits between the page content and the panel. Its `onclick="toggleProdMenu()"` means clicking anywhere outside the panel closes it — a standard UX pattern for drawers.
 
-Your CSS should make the overlay cover the viewport and be transparent by default, becoming semi-opaque when `.open` is applied:
-
-```css styles.css
-.prod-menu-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0);
-  pointer-events: none;
-  transition: background 0.3s ease;
-  z-index: 99;
-}
-
-.prod-menu-overlay.open {
-  background: rgba(0, 0, 0, 0.5);
-  pointer-events: all;
-}
-```
+The overlay is styled via CSS rules in `style.css`. It remains invisible until `.open` is applied, at which point it becomes visible and receives pointer events so clicks reach it (triggering the close).
 
 ## Products in the panel
 
@@ -129,7 +110,11 @@ function scrollToGrid() {
 }
 ```
 
-This smoothly scrolls the page to the element with `id="menu-grid"`. The `if (grid)` check prevents a JavaScript error if the grid element is not present on the page.
+<Note>
+`scrollToGrid()` targets `id="menu-grid"`. In the current `index.html`, the product grid section uses `id="grid"` (not `id="menu-grid"`). This means `scrollToGrid()` currently has no effect — the element is not found. To fix this, either rename the grid's ID in `index.html` to `menu-grid`, or update the function in `main.js` to use `getElementById('grid')`.
+</Note>
+
+The `if (grid)` check prevents a JavaScript error if the grid element is not present on the page.
 
 ## Adding a new product
 
@@ -162,8 +147,70 @@ The panel's visual structure is controlled entirely by CSS classes on the `<asid
 
 To change the panel width, update `.prod-menu-panel` in your CSS:
 
-```css styles.css
+```css style.css
 .prod-menu-panel {
   width: 340px; /* increase or decrease as needed */
 }
 ```
+
+## `setFilter()` and `filterProducts()`
+
+Two additional functions in `main.js` are available for sidebar filter interactions. They are not wired up in the current `index.html` but can be used if you add a filter sidebar.
+
+**`setFilter(el, cat)`** — marks a filter list item as active and triggers product filtering:
+
+```javascript main.js
+function setFilter(el, cat) {
+  document.querySelectorAll('.sidebar-filters li').forEach(li => {
+    li.classList.remove('active');
+  });
+  el.classList.add('active');
+
+  const grid = document.getElementById('menu-grid');
+  if (grid) {
+    grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  filterProducts(cat);
+}
+```
+
+**`filterProducts(cat)`** — shows or hides `.product` elements based on their `data-cat` attribute:
+
+```javascript main.js
+function filterProducts(cat) {
+  const products = document.querySelectorAll('.product');
+
+  products.forEach(product => {
+    const productCat = product.getAttribute('data-cat');
+
+    if (cat === 'todas' || productCat === cat) {
+      product.style.display = 'flex';
+      // animate in
+      product.style.opacity = '0';
+      product.style.transform = 'translateY(12px)';
+      setTimeout(() => {
+        product.style.transition = 'opacity .4s ease, transform .4s ease';
+        product.style.opacity = '1';
+        product.style.transform = 'translateY(0)';
+      }, 50);
+    } else {
+      product.style.display = 'none';
+    }
+  });
+}
+```
+
+To use filtering, add a `data-cat` attribute to each `.product` element and call `setFilter(this, 'category')` from filter buttons with class `sidebar-filters`:
+
+```html index.html
+<ul class="sidebar-filters">
+  <li onclick="setFilter(this, 'todas')">Todas</li>
+  <li onclick="setFilter(this, 'clasica')">Clásicas</li>
+  <li onclick="setFilter(this, 'especial')">Especiales</li>
+</ul>
+```
+
+<Note>
+`filterProducts('todas')` shows all products regardless of their `data-cat` value.
+</Note>
